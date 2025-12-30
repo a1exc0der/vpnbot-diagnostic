@@ -1,0 +1,20 @@
+--- a/app/domain/services/vpn_service.py
++++ b/app/domain/services/vpn_service.py
+@@ -734,6 +734,8 @@ class VPNService:
+             async def upsert(session):
+                 # Всегда создаем новый конфиг для каждого запроса
+                 logger.info(f"🆕 Создаю новый конфиг для пользователя {user_id}")
++                from datetime import datetime, timezone
++                now_utc = datetime.now(timezone.utc)
+                 user_config = UserConfig(
+                     user_id=user_id,
+                     node_id=None,  # НЕ привязываем к конкретной ноде!
+@@ -745,6 +747,7 @@ class VPNService:
+                     traffic_limit=None,
+                     expires_at=None,
+                     status="active",
++                    last_check=now_utc,  # Устанавливаем last_check при создании, чтобы следующий платеж был через сутки
+                 )
+                 session.add(user_config)
+                 await session.commit()
+
